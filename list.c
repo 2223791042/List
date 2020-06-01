@@ -44,8 +44,8 @@ struct List
 };
 
 /**
- * @brief 创建链表
- * @return 指向 List 的指针
+ * @brief 初始化链表
+ * @param list 指向 List 的指针
  */
 void ListInit(struct List *list);
 
@@ -131,8 +131,8 @@ struct Node *ListPeek(struct List *list);
 void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *));
 
 /**
- * @brief 创建链表
- * @return 指向 List 的指针
+ * @brief 初始化链表
+ * @param list 指向 List 的指针
  */
 void ListInit(struct List *list)
 {
@@ -334,6 +334,10 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
     struct Node *node = NULL;
     while (ptr != list->base) {
         ptrNext = ptr->next;
+        if (compareFunc(ptr->prev, ptr) <= 0) {
+            ptr = ptrNext;
+            continue;
+        }
         // 节点摘出
         node = ptr;
         node->prev->next = ptr->next;
@@ -349,12 +353,6 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
                 break;
             }
             ptr = ptr->next;
-        }
-        if (ptr == ptrNext) {
-            node->prev = ptr->prev;
-            ptr->prev->next = node;
-            node->next = ptr;
-            ptr->prev = node;
         }
         ptr = ptrNext;
     }
