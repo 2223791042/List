@@ -7,7 +7,7 @@ C 语言通用 List 集合
 
 | 功能描述               | 函数                                                         | 传入参数                                                     | 返回值                    |
 | ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------- |
-| 创建链表               | void ListInit(struct List *list);                            | 指向 List 的指针                                             | 空                        |
+| 初始化链表               | void ListInit(struct List *list);                            | 指向 List 的指针                                             | 空                        |
 | 根据下标获取链表节点   | struct Node *ListGet(struct List *list, int index);          | list List 指针，index 链表下标                               | 节点指针                  |
 | 向链表头部添加节点     | void ListAddHead(struct List *list, struct Node *newNode);   | list 指向 List 的指针，newNode 新节点指针                    | 空                        |
 | 向链表尾部添加节点     | void ListAddTail(struct List *list, struct Node *newNode);   | list 指向 List 的指针，newNode 新节点指针                    | 空                        |
