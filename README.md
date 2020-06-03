@@ -19,3 +19,8 @@ C 语言通用 List 集合
 | 链表 Pop 操作          | void ListPop(struct List *list, void (*freeFunc)(struct Node *)); | list 指向 List 的指针，freeFunc 释放实际节点空间的函数指针   | 空                        |
 | 链表 Peek 操作         | struct Node *ListPeek(struct List *list);                    | list 指向 List 的指针                                        | Peek 后得到的节点指针     |
 | 链表排序               | void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *)); | list 指向 List 的指针，compareFunc 比较函数                  | 空                        |
+| 移除链表头部元素 | void ListRemoveHead(struct List *list, void (*freeFunc)(struct Node *)); | list 指向 List 的指针，freeFunc 释放实际节点空间的函数指针 | 空 |
+| 移除链表尾部元素 | void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *)); | list 指向 List 的指针，freeFunc 释放实际节点空间的函数指针 | 空 |
+| 获得链表头部元素 | struct Node *ListGetHead(struct List *list); | list 指向 List 的指针 | 头部节点指针 |
+| 获得链表尾部元素 | struct Node *ListGetTail(struct List *list); | list 指向 List 的指针 | 尾部节点指针 |
+
