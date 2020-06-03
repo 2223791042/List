@@ -131,6 +131,34 @@ struct Node *ListPeek(struct List *list);
 void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *));
 
 /**
+ * @brief 移除链表头部元素
+ * @param list 指向 List 的指针
+ * @param freeFunc 释放实际节点空间的函数指针
+ */ 
+void ListRemoveHead(struct List *list, void (*freeFunc)(struct Node *));
+
+/**
+ * @brief 移除链表尾部元素
+ * @param list 指向 List 的指针
+ * @param freeFunc 释放实际节点空间的函数指针
+ */ 
+void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *));
+
+/**
+ * @brief 获得链表头部元素
+ * @param list 指向 List 的指针
+ * @return 头部节点指针
+ */
+struct Node *ListGetHead(struct List *list);
+
+/**
+ * @brief 获得链表尾部元素
+ * @param list 指向 List 的指针
+ * @return 尾部节点指针
+ */
+struct Node *ListGetTail(struct List *list);
+
+/**
  * @brief 初始化链表
  * @param list 指向 List 的指针
  */
@@ -328,7 +356,6 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
     if (list->size == 0 || list->size == 1) {
         return;
     }
-    // 插入排序
     struct Node *ptr = list->base->next->next;
     struct Node *ptrNext = NULL;
     struct Node *node = NULL;
@@ -338,11 +365,9 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
             ptr = ptrNext;
             continue;
         }
-        // 节点摘出
         node = ptr;
         node->prev->next = ptr->next;
         node->next->prev = ptr->prev; 
-        // 节点插入
         ptr = list->base->next;
         while (ptr != ptrNext) {
             if (compareFunc(node, ptr) < 0) {
@@ -356,4 +381,64 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
         }
         ptr = ptrNext;
     }
+}
+
+/**
+ * @brief 移除链表头部元素
+ * @param list 指向 List 的指针
+ * @param freeFunc 释放实际节点空间的函数指针
+ */ 
+void ListRemoveHead(struct List *list, void (*freeFunc)(struct Node *))
+{
+    if (list->size == 0) {
+        return;
+    }
+    struct Node *node = list->base->next;
+    list->base->next = list->base->next->next;
+    list->base->next->prev = list->base;
+    freeFunc(node);
+    list->size--;
+}
+
+/**
+ * @brief 移除链表尾部元素
+ * @param list 指向 List 的指针
+ * @param freeFunc 释放实际节点空间的函数指针
+ */ 
+void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *))
+{
+    if (ListIsEmpty(list)) {
+        return;
+    }
+    struct Node *node = list->base->prev;
+    list->base->prev = list->base->prev->prev;
+    list->base->prev->next = list->base;
+    freeFunc(node);
+    list->size--;
+}
+
+/**
+ * @brief 获得链表头部元素
+ * @param list 指向 List 的指针
+ * @return 头部节点指针
+ */
+struct Node *ListGetHead(struct List *list)
+{
+    if (ListIsEmpty(list)) {
+        return NULL;
+    }
+    return list->base->next;
+}
+
+/**
+ * @brief 获得链表尾部元素
+ * @param list 指向 List 的指针
+ * @return 尾部节点指针
+ */
+struct Node *ListGetTail(struct List *list)
+{
+    if (ListIsEmpty(list)) {
+        return NULL;
+    }
+    return list->base->prev;
 }
