@@ -192,9 +192,19 @@ struct Node *ListGet(struct List *list, int index)
     }
 
     struct Node *node = list->base->next;
-    while (index > 0) {
-        node = node->next;
-        index--;
+    
+    if (index < list->size / 2) {
+        while (index > 0) {
+            node = node->next;
+            index--;
+        }
+    } else {
+        int pos = list->size - 1;
+        node = list->base->prev;
+        while (pos > index) {
+            node = node->prev;
+            pos--;
+        }
     }
 
     return node;
