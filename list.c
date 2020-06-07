@@ -164,6 +164,10 @@ struct Node *ListGetTail(struct List *list);
  */
 void ListInit(struct List *list)
 {
+    if (list == NULL) {
+        return;
+    }
+
     struct Node *node = (struct Node *)malloc(sizeof(struct Node));
     if (node == NULL) {
         return;
@@ -183,7 +187,7 @@ void ListInit(struct List *list)
  */
 struct Node *ListGet(struct List *list, int index)
 {
-    if (index < 0 || index >= list->size) {
+    if (list == NULL || index < 0 || index >= list->size) {
         return NULL;
     }
 
@@ -204,7 +208,7 @@ struct Node *ListGet(struct List *list, int index)
  */ 
 void ListAddAtIndex(struct List *list, struct Node *newNode, int index)
 {
-    if (index > list->size) {
+    if (list == NULL || newNode == NULL || index > list->size) {
         return;
     }
 
@@ -233,6 +237,10 @@ void ListAddAtIndex(struct List *list, struct Node *newNode, int index)
  */ 
 void ListAddHead(struct List *list, struct Node *newNode)
 {
+    if (list == NULL || newNode == NULL) {
+        return;
+    }
+
     newNode->prev = list->base;
     newNode->next = list->base->next;
     newNode->next->prev = newNode;
@@ -247,6 +255,10 @@ void ListAddHead(struct List *list, struct Node *newNode)
  */ 
 void ListAddTail(struct List *list, struct Node *newNode)
 {
+    if (list == NULL || newNode == NULL) {
+        return;
+    }
+
     newNode->prev = list->base->prev;
     newNode->next = list->base;
     newNode->prev->next = newNode;
@@ -262,7 +274,7 @@ void ListAddTail(struct List *list, struct Node *newNode)
  */ 
 void ListDeleteAtIndex(struct List *list, int index, void (*freeFunc)(struct Node *))
 {
-    if (index < 0 || index >= list->size) {
+    if (list == NULL || freeFunc == NULL || index < 0 || index >= list->size) {
         return;
     }
 
@@ -286,6 +298,10 @@ void ListDeleteAtIndex(struct List *list, int index, void (*freeFunc)(struct Nod
  */ 
 void ListFree(struct List *list, void (*freeFunc)(struct Node *))
 {
+    if (list == NULL || freeFunc == NULL || list->base == NULL) {
+        return;
+    }
+
     struct Node *node = list->base->next;
     while (node != list->base) {
         list->base->next = node->next;
@@ -293,7 +309,9 @@ void ListFree(struct List *list, void (*freeFunc)(struct Node *))
         freeFunc(node);
         node = list->base->next;
     }
+
     free(list->base);
+    list->size = 0;
 }
 
 /**
@@ -303,7 +321,11 @@ void ListFree(struct List *list, void (*freeFunc)(struct Node *))
  */ 
 bool ListIsEmpty(struct List *list)
 {
-    return list->size == 0;
+    if (list == NULL || list->size == 0) {
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -313,6 +335,10 @@ bool ListIsEmpty(struct List *list)
  */ 
 void ListPush(struct List *list, struct Node *newNode)
 {
+    if (list == NULL || newNode == NULL) {
+        return;
+    }
+
     ListAddTail(list, newNode);
 }
 
@@ -323,9 +349,10 @@ void ListPush(struct List *list, struct Node *newNode)
  */ 
 void ListPop(struct List *list, void (*freeFunc)(struct Node *))
 {
-    if (ListIsEmpty(list)) {
+    if (list == NULL || freeFunc == NULL || ListIsEmpty(list)) {
         return;
     }
+
     struct Node *node = list->base->prev;
     list->base->prev = node->prev;
     node->prev->next = list->base;
@@ -340,9 +367,10 @@ void ListPop(struct List *list, void (*freeFunc)(struct Node *))
  */ 
 struct Node *ListPeek(struct List *list)
 {
-    if (ListIsEmpty(list)) {
+    if (list == NULL || ListIsEmpty(list)) {
         return NULL;
     }
+
     return list->base->prev;
 }
 
@@ -353,18 +381,21 @@ struct Node *ListPeek(struct List *list)
  */ 
 void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *))
 {
-    if (list->size == 0 || list->size == 1) {
+    if (list == NULL || compareFunc == NULL || list->size == 0 || list->size == 1) {
         return;
     }
+
     struct Node *ptr = list->base->next->next;
     struct Node *ptrNext = NULL;
     struct Node *node = NULL;
     while (ptr != list->base) {
         ptrNext = ptr->next;
+
         if (compareFunc(ptr->prev, ptr) <= 0) {
             ptr = ptrNext;
             continue;
         }
+
         node = ptr;
         node->prev->next = ptr->next;
         node->next->prev = ptr->prev; 
@@ -377,8 +408,10 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
                 ptr->prev = node;
                 break;
             }
+
             ptr = ptr->next;
         }
+
         ptr = ptrNext;
     }
 }
@@ -390,9 +423,10 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
  */ 
 void ListRemoveHead(struct List *list, void (*freeFunc)(struct Node *))
 {
-    if (list->size == 0) {
+    if (list == NULL || freeFunc == NULL || list->size == 0) {
         return;
     }
+
     struct Node *node = list->base->next;
     list->base->next = list->base->next->next;
     list->base->next->prev = list->base;
@@ -407,9 +441,10 @@ void ListRemoveHead(struct List *list, void (*freeFunc)(struct Node *))
  */ 
 void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *))
 {
-    if (ListIsEmpty(list)) {
+    if (list == NULL || freeFunc == NULL || ListIsEmpty(list)) {
         return;
     }
+
     struct Node *node = list->base->prev;
     list->base->prev = list->base->prev->prev;
     list->base->prev->next = list->base;
@@ -424,9 +459,10 @@ void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *))
  */
 struct Node *ListGetHead(struct List *list)
 {
-    if (ListIsEmpty(list)) {
+    if (list == NULL || ListIsEmpty(list)) {
         return NULL;
     }
+
     return list->base->next;
 }
 
@@ -437,8 +473,9 @@ struct Node *ListGetHead(struct List *list)
  */
 struct Node *ListGetTail(struct List *list)
 {
-    if (ListIsEmpty(list)) {
+    if (list == NULL || ListIsEmpty(list)) {
         return NULL;
     }
+
     return list->base->prev;
 }
