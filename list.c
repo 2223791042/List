@@ -21,8 +21,8 @@
  * @param member 自定义 Type 中 Node 的名称
  */ 
 #define LIST_FOR_EACH_ENTRY(entry, list, type, member) \
-    for (entry = NODE_ENTRY((list)->base->next, type, member); \
-         &(entry)->member != (list)->base; \
+    for (entry = NODE_ENTRY((list)->base.next, type, member); \
+         &(entry)->member != &(list)->base; \
          entry = NODE_ENTRY((entry)->member.next, type, member))
 
 
@@ -39,7 +39,7 @@ struct Node
  */ 
 struct List
 {
-    struct Node *base;
+    struct Node base;
     int size;
 };
 
@@ -164,20 +164,12 @@ struct Node *ListGetTail(struct List *list);
  */
 void ListInit(struct List *list)
 {
-    struct Node *node = NULL;
-
     if (list == NULL) {
         return;
     }
 
-    node = (struct Node *)malloc(sizeof(struct Node));
-    if (node == NULL) {
-        return;
-    }
-
-    node->next = node;
-    node->prev = node;
-    list->base = node;
+    list->base.next = &list->base;
+    list->base.prev = &list->base;
     list->size = 0;
 }
 
@@ -196,7 +188,7 @@ struct Node *ListGet(struct List *list, int index)
         return NULL;
     }
 
-    node = list->base->next;
+    node = list->base.next;
     
     if (index < list->size / 2) {
         while (index > 0) {
@@ -205,7 +197,7 @@ struct Node *ListGet(struct List *list, int index)
         }
     } else {
         pos = list->size - 1;
-        node = list->base->prev;
+        node = list->base.prev;
         while (pos > index) {
             node = node->prev;
             pos--;
@@ -234,7 +226,7 @@ void ListAddAtIndex(struct List *list, struct Node *newNode, int index)
         return ListAddTail(list, newNode);
     }
 
-    node = list->base->next;
+    node = list->base.next;
     while (index > 0) {
         node = node->next;
         index--;
@@ -259,10 +251,10 @@ void ListAddHead(struct List *list, struct Node *newNode)
         return;
     }
 
-    newNode->prev = list->base;
-    newNode->next = list->base->next;
+    newNode->prev = &list->base;
+    newNode->next = list->base.next;
     newNode->next->prev = newNode;
-    list->base->next = newNode;
+    list->base.next = newNode;
     list->size++;
 }
 
@@ -277,10 +269,10 @@ void ListAddTail(struct List *list, struct Node *newNode)
         return;
     }
 
-    newNode->prev = list->base->prev;
-    newNode->next = list->base;
+    newNode->prev = list->base.prev;
+    newNode->next = &list->base;
     newNode->prev->next = newNode;
-    list->base->prev = newNode;
+    list->base.prev = newNode;
     list->size++;
 }
 
@@ -299,7 +291,7 @@ void ListDeleteAtIndex(struct List *list, int index, void (*freeFunc)(struct Nod
         return;
     }
 
-    node = list->base->next;
+    node = list->base.next;
     while (index > 0) {
         node = node->next;
         index--;
@@ -321,19 +313,18 @@ void ListFree(struct List *list, void (*freeFunc)(struct Node *))
 {
     struct Node *node = NULL;
 
-    if (list == NULL || freeFunc == NULL || list->base == NULL) {
+    if (list == NULL || freeFunc == NULL) {
         return;
     }
 
-    node = list->base->next;
-    while (node != list->base) {
-        list->base->next = node->next;
-        node->next->prev = list->base;
+    node = list->base.next;
+    while (node != &list->base) {
+        list->base.next = node->next;
+        node->next->prev = &list->base;
         freeFunc(node);
-        node = list->base->next;
+        node = list->base.next;
     }
 
-    free(list->base);
     list->size = 0;
 }
 
@@ -378,9 +369,9 @@ void ListPop(struct List *list, void (*freeFunc)(struct Node *))
         return;
     }
 
-    node = list->base->prev;
-    list->base->prev = node->prev;
-    node->prev->next = list->base;
+    node = list->base.prev;
+    list->base.prev = node->prev;
+    node->prev->next = &list->base;
     freeFunc(node);
     list->size--;
 }
@@ -396,7 +387,7 @@ struct Node *ListPeek(struct List *list)
         return NULL;
     }
 
-    return list->base->prev;
+    return list->base.prev;
 }
 
 /**
@@ -414,10 +405,10 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
         return;
     }
 
-    ptr = list->base->next->next;
+    ptr = list->base.next->next;
     ptrNext = NULL;
     node = NULL;
-    while (ptr != list->base) {
+    while (ptr != &list->base) {
         ptrNext = ptr->next;
 
         if (compareFunc(ptr->prev, ptr) <= 0) {
@@ -428,7 +419,7 @@ void ListSort(struct List *list, int (*compareFunc)(struct Node *, struct Node *
         node = ptr;
         node->prev->next = ptr->next;
         node->next->prev = ptr->prev; 
-        ptr = list->base->next;
+        ptr = list->base.next;
         while (ptr != ptrNext) {
             if (compareFunc(node, ptr) < 0) {
                 ptr->prev->next = node;
@@ -458,9 +449,9 @@ void ListRemoveHead(struct List *list, void (*freeFunc)(struct Node *))
         return;
     }
 
-    node = list->base->next;
-    list->base->next = list->base->next->next;
-    list->base->next->prev = list->base;
+    node = list->base.next;
+    list->base.next = list->base.next->next;
+    list->base.next->prev = &list->base;
     freeFunc(node);
     list->size--;
 }
@@ -478,9 +469,9 @@ void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *))
         return;
     }
 
-    node = list->base->prev;
-    list->base->prev = list->base->prev->prev;
-    list->base->prev->next = list->base;
+    node = list->base.prev;
+    list->base.prev = list->base.prev->prev;
+    list->base.prev->next = &list->base;
     freeFunc(node);
     list->size--;
 }
@@ -496,7 +487,7 @@ struct Node *ListGetHead(struct List *list)
         return NULL;
     }
 
-    return list->base->next;
+    return list->base.next;
 }
 
 /**
@@ -510,5 +501,5 @@ struct Node *ListGetTail(struct List *list)
         return NULL;
     }
 
-    return list->base->prev;
+    return list->base.prev;
 }
