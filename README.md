@@ -24,3 +24,17 @@ C 语言通用 List 集合
 | 获得链表头部元素 | struct Node *ListGetHead(struct List *list); | list 指向 List 的指针 | 头部节点指针 |
 | 获得链表尾部元素 | struct Node *ListGetTail(struct List *list); | list 指向 List 的指针 | 尾部节点指针 |
 
+# HashTable
+
+C 语言存储键值对 HashTable
+
+现提供以下 API:
+
+| 功能描述                                          | 函数                                                         | 传入参数                                                     | 返回值                        |
+| ------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------------- |
+| HashTable 初始化                                  | bool HashInit(struct HashTable *hashTable, int bktSize);     | hashTable 指向 HashTable 的指针，bktSize HashTable 中链表个数 | true 表示成功，false 表示失败 |
+| 向 HashTable 中添加键值对（若键已存在，则更新值） | bool HashPut(struct HashTable *hashTable, int key, int val); | hashTable 指向 HashTable 的指针，key 键，val 值              | true 表示成功，false 表示失败 |
+| 在 HashTable 中根据键获取对应值                   | bool HashGet(struct HashTable *hashTable, int key, int *saveVal); | hashTable 指向 HashTable 的指针，key 键，saveVal 将获取到的值赋于该参数 | true 表示成功，false 表示失败 |
+| 删除 HashTable 中对应键值对                       | void HashRemove(struct HashTable *hashTable, int key);       | hashTable 指向 HashTable 的指针，key 键                      | 空                            |
+| 释放 HashTable                                    | void HashFree(struct HashTable *hashTable);                  | hashTable 指向 HashTable 的指针                              | 空                            |
+
