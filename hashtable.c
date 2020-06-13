@@ -25,7 +25,6 @@
          &(entry)->member != &(list)->base; \
          entry = NODE_ENTRY((entry)->member.next, type, member))
 
-
 /**
  * @brief 链表模板定义的 Node 类型
  */ 
