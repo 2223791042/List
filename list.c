@@ -25,7 +25,6 @@
          &(entry)->member != &(list)->base; \
          entry = NODE_ENTRY((entry)->member.next, type, member))
 
-
 /**
  * @brief 链表模板定义的 Node 类型
  */ 
@@ -63,7 +62,6 @@ struct Node *ListGet(struct List *list, int index);
  * @param newNode 新节点指针
  */ 
 void ListAddHead(struct List *list, struct Node *newNode);
-
 
 /**
  * @brief 向链表尾部添加节点
