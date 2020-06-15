@@ -349,10 +349,6 @@ bool ListIsEmpty(struct List *list)
  */ 
 void ListPush(struct List *list, struct Node *newNode)
 {
-    if (list == NULL || newNode == NULL) {
-        return;
-    }
-
     ListAddTail(list, newNode);
 }
 
@@ -363,17 +359,7 @@ void ListPush(struct List *list, struct Node *newNode)
  */ 
 void ListPop(struct List *list, void (*freeFunc)(struct Node *))
 {
-    struct Node *node = NULL;
-
-    if (list == NULL || freeFunc == NULL || ListIsEmpty(list)) {
-        return;
-    }
-
-    node = list->base.prev;
-    list->base.prev = node->prev;
-    node->prev->next = &list->base;
-    freeFunc(node);
-    list->size--;
+    ListRemoveTail(list, freeFunc);
 }
 
 /**
@@ -383,11 +369,7 @@ void ListPop(struct List *list, void (*freeFunc)(struct Node *))
  */ 
 struct Node *ListPeek(struct List *list)
 {
-    if (list == NULL || ListIsEmpty(list)) {
-        return NULL;
-    }
-
-    return list->base.prev;
+    return ListGetTail(list);
 }
 
 /**
