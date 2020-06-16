@@ -157,6 +157,15 @@ struct Node *ListGetHead(struct List *list);
 struct Node *ListGetTail(struct List *list);
 
 /**
+ * @brief 判断链表中是否存在该元素
+ * @param list 指向 List 的指针
+ * @param node 判断元素
+ * @param equalsFunc 比较元素是否相等的函数指针 
+ * @return true 存在，false 不存在
+ */ 
+bool ListContains(struct List *list, struct Node *node, bool (*equalsFunc)(struct Node *, struct Node *));
+
+/**
  * @brief 初始化链表
  * @param list 指向 List 的指针
  */
@@ -482,4 +491,30 @@ struct Node *ListGetTail(struct List *list)
     }
 
     return list->base.prev;
+}
+
+/**
+ * @brief 判断链表中是否存在该元素
+ * @param list 指向 List 的指针
+ * @param node 判断元素
+ * @param equalsFunc 比较元素是否相等的函数指针 
+ * @return true 存在，false 不存在
+ */ 
+bool ListContains(struct List *list, struct Node *node, bool (*equalsFunc)(struct Node *, struct Node *))
+{
+    struct Node *ptr = NULL;
+    if (list == NULL || node == NULL || equalsFunc == NULL || list->size == 0) {
+        return false;
+    }
+
+    ptr = list->base.next;
+    while (ptr != &list->base) {
+        if (equalsFunc(ptr, node)) {
+            return true;
+        }
+
+        ptr = ptr->next;
+    }
+
+    return false;
 }

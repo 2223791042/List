@@ -23,6 +23,7 @@ C 语言通用 List 集合
 | 移除链表尾部元素 | void ListRemoveTail(struct List *list, void (*freeFunc)(struct Node *)); | list 指向 List 的指针，freeFunc 释放实际节点空间的函数指针 | 空 |
 | 获得链表头部元素 | struct Node *ListGetHead(struct List *list); | list 指向 List 的指针 | 头部节点指针 |
 | 获得链表尾部元素 | struct Node *ListGetTail(struct List *list); | list 指向 List 的指针 | 尾部节点指针 |
+| 判断链表中是否存在该元素 | bool ListContains(struct List *list, struct Node *node, bool (*equalsFunc)(struct Node *, struct Node *)); | list 指向 List 的指针，node 判断元素，equalsFunc 比较元素是否相等的函数指针 | true 存在，false 不存在 |
 
 # HashTable
 
